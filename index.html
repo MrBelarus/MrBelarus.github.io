@@ -3,30 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портфолио</title>
+    <title>PORTFOLIO | Kurhei Uladzislau</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="header">
-        <a href="#" class="logo">Unity Разработчик</a>
+        <a href="#" class="logo">Portfolio | Kurhei Uladzislau</a>
         <nav class="navbar">
-            <a href="#about">О себе</a>
-            <a href="#projects">Проекты</a>
-            <a href="#contacts">Контакты</a>
+            <a href="#about">About me</a>
+            <a href="#projects">Projects</a>
+            <a href="#contacts">Contacts</a>
         </nav>
     </header>
 
     <section id="about" class="about-section">
         <div class="about-content">
-            <h1>Привет, я <span class="highlight">Имя Фамилия</span></h1>
-            <p>Я занимаюсь веб-разработкой и создаю адаптивные интерфейсы. Добро пожаловать на мой сайт-портфолио!</p>
-            <a href="#contacts" class="btn">Связаться со мной</a>
+            
+            <div class="about-main">
+                <div class="about-avatar-wrapper">
+                    <img src="images/me.png" alt="Моё фото" onerror="this.src='https://placeholder.com'">
+                </div>
+                <div class="about-greeting">
+                    <h1>Hello</h1>
+                </div>
+            </div>
+
+            <p class="about-description">
+                I make video games using Unity engine for <b>5 years</b> now.<br>Welcome to my portfolio!
+            </p>
+            
+
+            <div class="about-skills-wrapper">
+                <h3 class="skills-title">Unity stack</h3>
+                <div class="about-skills">
+                    <span class="skill-tag">UniTask</span>
+                    <span class="skill-tag">VContainer</span>
+                    <span class="skill-tag">Zenject</span>
+                    <span class="skill-tag">PrimeTween</span>
+                    <span class="skill-tag">DOTween</span>
+                    <span class="skill-tag">DOTS (basics)</span>
+                    <span class="skill-tag">Android</span>
+                    <span class="skill-tag">iOS</span>
+                    <span class="skill-tag">Git</span>
+                </div>
+            </div>
+
+            <div class="about-skills-wrapper">
+                <h3 class="skills-title">Other skills</h3>
+                <div class="about-skills">
+                    <span class="skill-tag">Blender 3d</span>
+                    <span class="skill-tag">Photoshop</span>
+                    <span class="skill-tag">Illustrator</span>
+                    <span class="skill-tag">FL Studio</span>
+                    <span class="skill-tag">Asset Store (Publisher)</span>
+                    <span class="skill-tag">Steamworks</span>
+                </div>
+            </div>
         </div>
     </section>
 
     <section id="projects" class="projects-section">
-        <h2>Мои Проекты</h2>
+        <h2>Projects</h2>
         <div class="projects-grid" id="projectsGrid"></div>
     </section>
 
@@ -40,19 +78,23 @@
         </div>
     </div>
 
-    <div class="modal-overlay image-preview-modal" id="imageModal">
-        <div class="image-preview-content">
-            <button class="modal-close">&times;</button>
-            <img id="previewImage" src="" alt="Крупный просмотр">
-        </div>
+<div class="modal-overlay image-preview-modal" id="imageModal">
+    <div class="image-preview-content">
+        <button class="gallery-btn prev-btn">&lsaquo;</button>
+        <button class="gallery-btn next-btn">&rsaquo;</button>
+        
+        <button class="modal-close">&times;</button>
+        <img id="previewImage" src="" alt="Крупный просмотр">
     </div>
+</div>
 
     <section id="contacts" class="contacts-section">
-        <h2>Контакты</h2>
+        <h2>Contacts</h2>
         <div class="contact-links">
-            <a href="lakey38015@gmail.com" class="contact-item">Email: your-email@example.com</a>
-            <a href="https://github.com/MrBelarus" target="_blank" class="contact-item">GitHub</a>
+            <a href="mailto:lakey38015@gmail.com" class="contact-item">Email: lakey38015@gmail.com</a>
             <a href="https://t.me/reddycat" target="_blank" class="contact-item">Telegram</a>
+            <a href="https://www.linkedin.com/in/uladzislau-kurhei/" target="_blank" class="contact-item">LinkedIn</a>
+            <a href="https://github.com/MrBelarus" target="_blank" class="contact-item">GitHub</a>
         </div>
     </section>
 
