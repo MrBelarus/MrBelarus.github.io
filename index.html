@@ -27,27 +27,25 @@
 
     <section id="projects" class="projects-section">
         <h2>Мои Проекты</h2>
-        <div class="projects-grid">
-            <div class="project-card">
-                <h3>Проект 1</h3>
-                <p>Описание первого проекта. Использованные технологии: HTML, CSS.</p>
-                <a href="#" class="project-link">Смотреть код</a>
-            </div>
-            <div class="project-card">
-                <h3>Проект 2</h3>
-                <p>Описание второго проекта. Удобный интерфейс и адаптивный дизайн.</p>
-                <a href="#" class="project-link">Смотреть код</a>
-            </div>
-            <div class="project-card">
-                <h3>Проект 3</h3>
-                <div class="project-image-wrapper">
-                    <img src="https://placeholder.com" alt="Project Preview">
-                </div>
-                <p>Описание третьего проекта. Оптимизация скорости и кроссбраузерность.</p>
-                <a href="#" class="project-link">Смотреть код</a>
-            </div>
-        </div>
+        <div class="projects-grid" id="projectsGrid"></div>
     </section>
+
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2 id="modalTitle"></h2>
+            <div class="modal-video-wrapper" id="modalVideoWrapper"></div>
+            <div class="modal-screenshots" id="modalScreenshots"></div>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+
+    <div class="modal-overlay image-preview-modal" id="imageModal">
+        <div class="image-preview-content">
+            <button class="modal-close">&times;</button>
+            <img id="previewImage" src="" alt="Крупный просмотр">
+        </div>
+    </div>
 
     <section id="contacts" class="contacts-section">
         <h2>Контакты</h2>
@@ -62,5 +60,6 @@
         <p>&copy; 2026. reddycat</p>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 </html>
