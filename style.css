@@ -69,6 +69,10 @@ body.no-scroll {
     color: var(--primary-color);
 }
 
+section[id] {
+    scroll-margin-top: 30px;
+}
+
 .about-section {
     min-height: calc(50vh - 74px);
     padding-top: 150px;
@@ -127,21 +131,24 @@ body.no-scroll {
     font-size: 48px;
     color: var(--text-dark);
     text-align: left;
-    line-height: 1.2;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 864px) {
     .about-main {
         gap: 15px;
     }
     
     .about-avatar-wrapper img {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
     }
     
     .about-greeting h1 {
-        font-size: 32px;
+        font-size: 48px;
+    }
+
+    section[id] {
+        scroll-margin-top: 50px;
     }
 }
 
@@ -202,7 +209,7 @@ body.no-scroll {
 }
 
 .projects-section {
-    padding: 60px 10% 100px;
+    padding: 60px 5px 100px;
     background-color: var(--bg-card);
 }
 
@@ -225,7 +232,8 @@ body.no-scroll {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 25px;
-    width: 300px;
+    flex: 1 1 300px;
+    max-width: 300px;
     box-shadow: 0 4px 6px var(--shadow-light);
     transition: transform 0.1s ease-out, box-shadow 0.5s ease;
 }
@@ -433,7 +441,7 @@ body.no-scroll {
     object-fit: contain;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 864px) {
     .modal-video-wrapper .video-main {
         height: 300px;
         max-height: 40vh;
@@ -489,7 +497,7 @@ body.no-scroll {
     font-size: 36px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 864px) {
     .image-preview-content {
         max-width: 95vw;
         max-height: 80vh;
@@ -590,7 +598,7 @@ body.no-scroll {
     font-size: 14px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 864px) {
     .header {
         flex-direction: column;
         padding: 15px;
