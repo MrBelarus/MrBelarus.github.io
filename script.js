@@ -1,11 +1,20 @@
 const projectsList = [
-    "pet-wheel-balance",
-    "pet-hook-stars",
+    "guns-factory",
+	"bucket-hero",
+    "soccer-strike",
+    "town-takeover",
+    "hex-city-defense",
+    "pin-bullet",
+    "pals-io",
+    "wild-west-idle",
+    "survival-race",
+    "royal-wars",
+    "lasers-td",
+    "wild-arena-pvp",
 ];
 
 const petProjectsList = [
     "pet-wheel-balance",
-    "pet-hook-stars",
 ];
 
 const projectsGrid = document.getElementById('projectsGrid');
@@ -74,7 +83,7 @@ async function renderProjects(list, gridContainer) {
                     ${tagsHtml}
                 </div>
                 <p>${info.cardShortDesc}</p>
-                <button class="project-btn-open" data-folder="${folder}">Подробнее</button>
+                <button class="project-btn-open" data-folder="${folder}">Learn more</button>
             `;
             
             gridContainer.appendChild(card);
