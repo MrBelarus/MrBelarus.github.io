@@ -3,7 +3,14 @@ const projectsList = [
     "pet-hook-stars",
 ];
 
+const petProjectsList = [
+    "pet-wheel-balance",
+    "pet-hook-stars",
+];
+
 const projectsGrid = document.getElementById('projectsGrid');
+const petProjectsGrid = document.getElementById('petProjectsGrid');
+
 const modal = document.getElementById('projectModal');
 const closeBtn = document.querySelector('.modal-close');
 
@@ -23,8 +30,27 @@ let currentImgIndex = 0;
 
 const loadedProjectsData = {};
 
+/* Markdown It plugin support */
+const md = new markdownit({
+    html: false,   
+    linkify: true, 
+    breaks: true   
+});
+
 async function initProjects() {
-    for (const folder of projectsList) {
+    if (projectsGrid) {
+        await renderProjects(projectsList, projectsGrid);
+    }
+
+    if (petProjectsGrid) {
+        await renderProjects(petProjectsList, petProjectsGrid);
+    }
+
+    initModalEvents();
+}
+
+async function renderProjects(list, gridContainer) {
+    for (const folder of list) {
         const projectPath = `projects/${folder}`;
         
         try {
@@ -51,21 +77,23 @@ async function initProjects() {
                 <button class="project-btn-open" data-folder="${folder}">Подробнее</button>
             `;
             
-            projectsGrid.appendChild(card);
+            gridContainer.appendChild(card);
 
         } catch (error) {
             console.error(`Ошибка инициализации проекта ${folder}:`, error);
         }
     }
-
-    initModalEvents();
 }
 
 function initModalEvents() {
     const openButtons = document.querySelectorAll('.project-btn-open');
     
     openButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.replaceWith(button.cloneNode(true));
+    });
+
+    document.querySelectorAll('.project-btn-open').forEach(button => {
+        button.addEventListener('click', async () => {
             const folderName = button.getAttribute('data-folder');
             const info = loadedProjectsData[folderName];
             const projectPath = `projects/${folderName}`;
@@ -73,7 +101,19 @@ function initModalEvents() {
             if (!info) return;
 
             modalTitle.textContent = info.title;
-            modalDescription.textContent = info.description;
+            modalDescription.innerHTML = 'loading...';
+            modalDescription.classList.add('md-content');
+        
+            try {
+                const mdResponse = await fetch(`${projectPath}/description.md`);
+                if (!mdResponse.ok) throw new Error('Файл описания не найден');
+                
+                const markdownText = await mdResponse.text();
+                modalDescription.innerHTML = md.render(markdownText);
+            } catch (error) {
+                console.error(`Не удалось загрузить description.md для ${folderName}:`, error);
+                modalDescription.innerHTML = md.render(info.cardShortDesc || 'Описание отсутствует.');
+            }
 
             modalScreenshots.innerHTML = '';
             for (let i = 1; i <= 3; i++) {
@@ -86,12 +126,9 @@ function initModalEvents() {
             }
 
             modalVideoWrapper.innerHTML = `
-                <!-- blurred -->
                 <video class="video-blur" muted playsinline preload="none">
                     <source src="${projectPath}/video.mp4" type="video/mp4">
                 </video>
-                
-                <!-- main -->
                 <video class="video-main" controls autoplay preload="auto">
                     <source src="${projectPath}/video.mp4" type="video/mp4">
                 </video>
@@ -243,10 +280,10 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('blur', () => handlePageFocus(false));
 window.addEventListener('focus', () => handlePageFocus(true));
 
-projectsGrid.addEventListener('click', (e) => {
+document.addEventListener('click', (e) => {
     if (e.target.classList.contains('project-image-click')) {
         const folder = e.target.getAttribute('data-folder');
-        const matchingButton = projectsGrid.querySelector(`.project-btn-open[data-folder="${folder}"]`);
+        const matchingButton = document.querySelector(`.project-btn-open[data-folder="${folder}"]`);
         
         if (matchingButton) {
             matchingButton.click();

@@ -63,10 +63,21 @@
         </div>
     </section>
 
-    <section id="projects" class="projects-section">
+    <!-- Project sections -->
+     
+    <!-- Mark project section first as project-group-first -->
+    <!-- Mark project section last as project-group-last -->
+    <section id="projects" class="projects-section project-group project-group-first">
         <h2>Projects</h2>
         <div class="projects-grid" id="projectsGrid"></div>
     </section>
+
+    <section id="pet-projects" class="projects-section project-group project-group-last">
+        <h2>Pet Projects</h2>
+        <div class="projects-grid" id="petProjectsGrid"></div>
+    </section>
+
+    <!-- End project sections -->
 
     <div class="modal-overlay" id="projectModal">
         <div class="modal-content">
@@ -102,6 +113,7 @@
         <p>&copy; 2026. reddycat</p>
     </footer>
 
+    <script src="markdown-it.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
