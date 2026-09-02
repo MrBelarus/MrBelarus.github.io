@@ -1,8 +1,14 @@
-### 🎯 Описание проекта
-Интерактивное веб-приложение для визуализации и анализа колеса жизненного баланса. Помогает пользователю оценить **8 ключевых сфер жизни**.
+### 🎯 Description
+Wheel Balance is a hard and fun physics-based game about balancing on two wheels. Master controls and beat all locations, compete with your friends. Try not to fall far away down!
 
-### ⚡ Основной функционал
-* **Динамическая отрисовка:** Сферы жизни плавно рисуются на Canvas.
-* **Сохранение данных:** Интеграция с LocalStorage.
+### ⚡ Features
+* Hard to master physics-based controls
+* Find nuts on locations
+* Buy new vehicles
+* Stylized graphics
 
-Подробный исходный код можно найти на [моем GitHub](https://github.com).
+### 📦 Publisher
+Okiddy Games
+(Made as solo developer)
+
+[Steam](https://store.steampowered.com/app/4356420/Wheel_Balance/)

@@ -15,6 +15,9 @@ const projectsList = [
 
 const petProjectsList = [
     "pet-wheel-balance",
+    "pet-snail-io",
+    "pet-pixel-madness",
+    "pet-forever-fall"
 ];
 
 const projectsGrid = document.getElementById('projectsGrid');
@@ -27,6 +30,7 @@ const modalTitle = document.getElementById('modalTitle');
 const modalScreenshots = document.getElementById('modalScreenshots');
 const modalVideoWrapper = document.getElementById('modalVideoWrapper');
 const modalDescription = document.getElementById('modalDescription');
+const embeddedWrapper = document.getElementById('embeddedWrapper');
 
 const imageModal = document.getElementById('imageModal');
 const previewImage = document.getElementById('previewImage');
@@ -41,10 +45,17 @@ const loadedProjectsData = {};
 
 /* Markdown It plugin support */
 const md = new markdownit({
-    html: false,   
+    html: true,   
     linkify: true, 
     breaks: true   
 });
+
+md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+  tokens[idx].attrSet('target', '_blank');
+  tokens[idx].attrSet('rel', 'noopener noreferrer');
+  
+  return self.renderToken(tokens, idx, options, env, self);
+};
 
 async function initProjects() {
     if (projectsGrid) {
@@ -76,7 +87,7 @@ async function renderProjects(list, gridContainer) {
             card.innerHTML = `
                 <h3>${info.cardTitle}</h3>
                 <div class="project-image-wrapper">
-                    <img src="${projectPath}/icon.png" class="project-image-click" data-folder="${folder}" alt="${info.cardTitle}" onerror="this.src='https://placeholder.com'">
+                    <img src="${projectPath}/icon.jpg" class="project-image-click" data-folder="${folder}" alt="${info.cardTitle}" onerror="this.src='https://placeholder.com'">
                 </div>
                 
                 <div class="project-tags-list">
@@ -89,7 +100,7 @@ async function renderProjects(list, gridContainer) {
             gridContainer.appendChild(card);
 
         } catch (error) {
-            console.error(`Ошибка инициализации проекта ${folder}:`, error);
+            console.error(`Init ${folder} error:`, error);
         }
     }
 }
@@ -115,42 +126,100 @@ function initModalEvents() {
         
             try {
                 const mdResponse = await fetch(`${projectPath}/description.md`);
-                if (!mdResponse.ok) throw new Error('Файл описания не найден');
+                if (!mdResponse.ok) throw new Error('description.md not found');
                 
                 const markdownText = await mdResponse.text();
                 modalDescription.innerHTML = md.render(markdownText);
             } catch (error) {
-                console.error(`Не удалось загрузить description.md для ${folderName}:`, error);
+                console.error(`Can't load description.md for ${folderName}:`, error);
                 modalDescription.innerHTML = md.render(info.cardShortDesc || 'Описание отсутствует.');
             }
 
             modalScreenshots.innerHTML = '';
             for (let i = 1; i <= 3; i++) {
                 const img = document.createElement('img');
-                img.src = `${projectPath}/screen${i}.png`;
+                img.src = `${projectPath}/screen${i}.jpg`;
                 img.alt = `Скриншот ${i}`;
                 img.className = 'previewable';
                 img.onerror = () => img.style.display = 'none';
                 modalScreenshots.appendChild(img);
             }
 
-            modalVideoWrapper.innerHTML = `
-                <video class="video-blur" muted playsinline preload="none">
-                    <source src="${projectPath}/video.mp4" type="video/mp4">
-                </video>
-                <video class="video-main" controls autoplay preload="auto">
-                    <source src="${projectPath}/video.mp4" type="video/mp4">
-                </video>
-            `;
+            modalVideoWrapper.innerHTML = '';
+            
+            const videoType = info.video ? info.video.trim() : 'none';
 
-            const mainVid = modalVideoWrapper.querySelector('.video-main');
-            const blurVid = modalVideoWrapper.querySelector('.video-blur');
+            if (videoType !== 'none') {
+                const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = videoType.match(ytRegExp);
+                const isYouTube = match && match[2].length === 11;
 
-            mainVid.addEventListener('play', () => blurVid.play());
-            mainVid.addEventListener('pause', () => blurVid.pause());
-            mainVid.addEventListener('seeking', () => blurVid.currentTime = mainVid.currentTime);
+                if (isYouTube) {
+                    const videoId = match[2];
+                    
+                    modalVideoWrapper.innerHTML = `
+                        <div class="youtube-responsive-wrapper">
+                            <iframe 
+                                src="https://youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&rel=0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                frameborder="0" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    `;
+                } else if (videoType === 'local') {
+                    modalVideoWrapper.innerHTML = `
+                        <video class="video-blur" muted playsinline preload="none">
+                            <source src="${projectPath}/video.mp4" type="video/mp4">
+                        </video>
+                        <video class="video-main" controls autoplay preload="auto">
+                            <source src="${projectPath}/video.mp4" type="video/mp4">
+                        </video>
+                    `;
 
-            mainVid.volume = 0.25;
+                    const mainVid = modalVideoWrapper.querySelector('.video-main');
+                    const blurVid = modalVideoWrapper.querySelector('.video-blur');
+
+                    if (mainVid && blurVid) {
+                        mainVid.addEventListener('play', () => blurVid.play());
+                        mainVid.addEventListener('pause', () => blurVid.pause());
+                        mainVid.addEventListener('seeking', () => blurVid.currentTime = mainVid.currentTime);
+                        mainVid.volume = 0.25;
+                    }
+                }
+            }
+
+            embeddedWrapper.innerHTML = '';
+
+            if (info.hasEmbed === true) {
+                const startBtn = document.createElement('button');
+                startBtn.className = 'project-btn-embed';
+                startBtn.innerHTML = 'Run';
+                
+                startBtn.addEventListener('click', async () => {
+                    embeddedWrapper.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa;">Loading game...</div>';
+                    
+                    try {
+                        const embedPath = `${projectPath}/embed.html`;
+                        const response = await fetch(embedPath);
+                        
+                        if (!response.ok) throw new Error(`Embed get error ${embedPath}`);
+                        
+                        const embedHtmlText = await response.text();
+                        
+                        embeddedWrapper.innerHTML = `
+                            <div class="embed-responsive-wrapper">
+                                ${embedHtmlText}
+                            </div>
+                        `;
+                    } catch (err) {
+                        console.error(`Embed load error:`, err);
+                        embeddedWrapper.innerHTML = `<p style="text-align:center; color:#fa5c5c;">Couldn't load the embed :(</p>`;
+                    }
+                });
+                
+                embeddedWrapper.appendChild(startBtn);
+            }
 
             modal.classList.add('active');
             modelOpenHistoryPush();
@@ -161,6 +230,8 @@ function initModalEvents() {
 function closeModal() {
     modal.classList.remove('active');
     modalVideoWrapper.innerHTML = '';
+    modalDescription.innerHTML = '';
+    embeddedWrapper.innerHTML = '';
     checkScrollLock();
 }
 
