@@ -269,7 +269,7 @@ function initModalEvents() {
         }
 
         modal.classList.add('active');
-        modelOpenHistoryPush();
+        modalOpenHistoryPush('project');
     });
 }
 
@@ -293,7 +293,7 @@ function closeModal() {
     embeddedWrapper.innerHTML = '';
     checkScrollLock();
     
-    if (window.location.hash === '#modal') {
+    if (window.location.hash === '#project-modal') {
         history.back();
     }
 }
@@ -318,7 +318,7 @@ document.addEventListener('click', (e) => {
 
         updateGalleryImage();
         imageModal.classList.add('active'); 
-        modalOpenHistoryPush(); 
+        modalOpenHistoryPush('image');
     }
 });
 
@@ -377,7 +377,7 @@ function closeImageModal() {
     previewImage.src = ''; 
     checkScrollLock();
     
-    if (window.location.hash === '#modal') {
+    if (window.location.hash === '#image-modal') {
         history.back();
     }
 }
@@ -390,8 +390,11 @@ imageModal.addEventListener('click', (e) => {
 // exit events
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        closeModal();
-        closeImageModal();
+        if (imageModal.classList.contains('active')) {
+            closeImageModal();
+        } else if (modal.classList.contains('active')) {
+            closeModal();
+        }
     }
 });
 
@@ -403,8 +406,12 @@ function checkScrollLock() {
     }
 }
 
-function modelOpenHistoryPush() {
-    history.pushState({ modalOpen: true }, '', '#modal');
+function modalOpenHistoryPush(type) {
+    if (type === 'image') {
+        history.pushState({ modalType: 'image' }, '', '#image-modal');
+    } else {
+        history.pushState({ modalType: 'project' }, '', '#project-modal');
+    }
     checkScrollLock();
 }
 
@@ -427,10 +434,10 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('blur', () => handlePageFocus(false));
 window.addEventListener('focus', () => handlePageFocus(true));
 window.addEventListener('popstate', (e) => {
-    if (modal.classList.contains('active')) {
+    if (modal.classList.contains('active') && window.location.hash !== '#project-modal') {
         closeModal();
     }
-    if (imageModal.classList.contains('active')) {
+    if (imageModal.classList.contains('active') && window.location.hash !== '#image-modal') {
         closeImageModal();
     }
 });
