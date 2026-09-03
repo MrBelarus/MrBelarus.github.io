@@ -106,133 +106,145 @@ async function renderProjects(list, gridContainer) {
 }
 
 function initModalEvents() {
-    const openButtons = document.querySelectorAll('.project-btn-open');
+    document.addEventListener('click', async (e) => {
+        const button = e.target.closest('.project-btn-open');
+        if (!button) return;
+
+        const folderName = button.getAttribute('data-folder');
+        const info = loadedProjectsData[folderName];
+        const projectPath = `projects/${folderName}`;
+
+        if (!info) return;
+
+        modalTitle.textContent = info.title;
+        modalDescription.innerHTML = 'loading...';
+        modalDescription.classList.add('md-content');
     
-    openButtons.forEach(button => {
-        button.replaceWith(button.cloneNode(true));
-    });
-
-    document.querySelectorAll('.project-btn-open').forEach(button => {
-        button.addEventListener('click', async () => {
-            const folderName = button.getAttribute('data-folder');
-            const info = loadedProjectsData[folderName];
-            const projectPath = `projects/${folderName}`;
-
-            if (!info) return;
-
-            modalTitle.textContent = info.title;
-            modalDescription.innerHTML = 'loading...';
-            modalDescription.classList.add('md-content');
-        
-            try {
-                const mdResponse = await fetch(`${projectPath}/description.md`);
-                if (!mdResponse.ok) throw new Error('description.md not found');
-                
-                const markdownText = await mdResponse.text();
-                modalDescription.innerHTML = md.render(markdownText);
-            } catch (error) {
-                console.error(`Can't load description.md for ${folderName}:`, error);
-                modalDescription.innerHTML = md.render(info.cardShortDesc || 'Описание отсутствует.');
-            }
-
-            modalScreenshots.innerHTML = '';
-            for (let i = 1; i <= 3; i++) {
-                const img = document.createElement('img');
-                img.src = `${projectPath}/screen${i}.jpg`;
-                img.alt = `Скриншот ${i}`;
-                img.className = 'previewable';
-                img.onerror = () => img.style.display = 'none';
-                modalScreenshots.appendChild(img);
-            }
-
-            modalVideoWrapper.innerHTML = '';
+        try {
+            const mdResponse = await fetch(`${projectPath}/description.md`);
+            if (!mdResponse.ok) throw new Error('description.md not found');
             
-            const videoType = info.video ? info.video.trim() : 'none';
+            const markdownText = await mdResponse.text();
+            modalDescription.innerHTML = md.render(markdownText);
+        } catch (error) {
+            console.error(`Can't load description.md for ${folderName}:`, error);
+            modalDescription.innerHTML = md.render(info.cardShortDesc || 'Описание отсутствует.');
+        }
 
-            if (videoType !== 'none') {
-                const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = videoType.match(ytRegExp);
-                const isYouTube = match && match[2].length === 11;
+        modalScreenshots.innerHTML = '';
+        for (let i = 1; i <= 3; i++) {
+            const img = document.createElement('img');
+            img.src = `${projectPath}/screen${i}.jpg`;
+            img.alt = `Скриншот ${i}`;
+            img.className = 'previewable';
+            img.onerror = () => img.style.display = 'none';
+            modalScreenshots.appendChild(img);
+        }
 
-                if (isYouTube) {
-                    const videoId = match[2];
-                    
-                    modalVideoWrapper.innerHTML = `
-                        <div class="youtube-responsive-wrapper">
-                            <iframe 
-                                src="https://youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&rel=0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                frameborder="0" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                    `;
-                } else if (videoType === 'local') {
-                    modalVideoWrapper.innerHTML = `
-                        <video class="video-blur" muted playsinline preload="none">
-                            <source src="${projectPath}/video.mp4" type="video/mp4">
-                        </video>
-                        <video class="video-main" controls autoplay preload="auto">
-                            <source src="${projectPath}/video.mp4" type="video/mp4">
-                        </video>
-                    `;
+        modalVideoWrapper.innerHTML = '';
+        
+        const videoType = info.video ? info.video.trim() : 'none';
 
-                    const mainVid = modalVideoWrapper.querySelector('.video-main');
-                    const blurVid = modalVideoWrapper.querySelector('.video-blur');
+        if (videoType !== 'none') {
+            const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = videoType.match(ytRegExp);
+            const isYouTube = match && match[2].length === 11;
 
-                    if (mainVid && blurVid) {
-                        mainVid.addEventListener('play', () => blurVid.play());
-                        mainVid.addEventListener('pause', () => blurVid.pause());
-                        mainVid.addEventListener('seeking', () => blurVid.currentTime = mainVid.currentTime);
-                        mainVid.volume = 0.25;
-                    }
+            if (isYouTube) {
+                const videoId = match[2];
+                
+                modalVideoWrapper.innerHTML = `
+                    <div class="youtube-responsive-wrapper">
+                        <iframe 
+                            src="https://youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&rel=0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            frameborder="0" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                `;
+            } else if (videoType === 'local') {
+                modalVideoWrapper.innerHTML = `
+                    <video class="video-blur" muted playsinline preload="none">
+                        <source src="${projectPath}/video.mp4" type="video/mp4">
+                    </video>
+                    <video class="video-main" controls autoplay preload="auto">
+                        <source src="${projectPath}/video.mp4" type="video/mp4">
+                    </video>
+                `;
+
+                const mainVid = modalVideoWrapper.querySelector('.video-main');
+                const blurVid = modalVideoWrapper.querySelector('.video-blur');
+
+                if (mainVid && blurVid) {
+                    mainVid.addEventListener('play', () => blurVid.play());
+                    mainVid.addEventListener('pause', () => blurVid.pause());
+                    mainVid.addEventListener('seeking', () => blurVid.currentTime = mainVid.currentTime);
+                    mainVid.volume = 0.25;
                 }
             }
+        }
 
-            embeddedWrapper.innerHTML = '';
+        embeddedWrapper.innerHTML = '';
 
-            if (info.hasEmbed === true) {
-                const startBtn = document.createElement('button');
-                startBtn.className = 'project-btn-embed';
-                startBtn.innerHTML = 'Run';
+        if (info.hasEmbed === true) {
+            const startBtn = document.createElement('button');
+            startBtn.className = 'project-btn-embed';
+            startBtn.innerHTML = 'Run';
+            
+            startBtn.addEventListener('click', async () => {
+                embeddedWrapper.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa;">Loading game...</div>';
                 
-                startBtn.addEventListener('click', async () => {
-                    embeddedWrapper.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa;">Loading game...</div>';
+                try {
+                    const embedPath = `${projectPath}/embed.html`;
+                    const response = await fetch(embedPath);
                     
-                    try {
-                        const embedPath = `${projectPath}/embed.html`;
-                        const response = await fetch(embedPath);
-                        
-                        if (!response.ok) throw new Error(`Embed get error ${embedPath}`);
-                        
-                        const embedHtmlText = await response.text();
-                        
-                        embeddedWrapper.innerHTML = `
-                            <div class="embed-responsive-wrapper">
-                                ${embedHtmlText}
-                            </div>
-                        `;
-                    } catch (err) {
-                        console.error(`Embed load error:`, err);
-                        embeddedWrapper.innerHTML = `<p style="text-align:center; color:#fa5c5c;">Couldn't load the embed :(</p>`;
-                    }
-                });
-                
-                embeddedWrapper.appendChild(startBtn);
-            }
+                    if (!response.ok) throw new Error(`Embed get error ${embedPath}`);
+                    
+                    const embedHtmlText = await response.text();
+                    
+                    embeddedWrapper.innerHTML = `
+                        <div class="embed-responsive-wrapper">
+                            ${embedHtmlText}
+                        </div>
+                    `;
+                } catch (err) {
+                    console.error(`Embed load error:`, err);
+                    embeddedWrapper.innerHTML = `<p style="text-align:center; color:#fa5c5c;">Couldn't load the embed :(</p>`;
+                }
+            });
+            
+            embeddedWrapper.appendChild(startBtn);
+        }
 
-            modal.classList.add('active');
-            modelOpenHistoryPush();
-        });
+        modal.classList.add('active');
+        modelOpenHistoryPush();
     });
 }
 
 function closeModal() {
     modal.classList.remove('active');
+
+    const ytIframe = modalVideoWrapper.querySelector('iframe');
+    if (ytIframe) {
+        ytIframe.src = 'about:blank';
+        ytIframe.remove();
+    }
+
+    const gameIframes = embeddedWrapper.querySelectorAll('iframe');
+    gameIframes.forEach(iframe => {
+        iframe.src = 'about:blank';
+        iframe.remove();
+    });
+
     modalVideoWrapper.innerHTML = '';
     modalDescription.innerHTML = '';
     embeddedWrapper.innerHTML = '';
     checkScrollLock();
+    
+    if (window.location.hash === '#modal') {
+        history.back();
+    }
 }
 
 closeBtn.addEventListener('click', closeModal);
@@ -313,6 +325,10 @@ function closeImageModal() {
     imageModal.classList.remove('active');
     previewImage.src = ''; 
     checkScrollLock();
+    
+    if (window.location.hash === '#modal') {
+        history.back();
+    }
 }
 
 imageModalClose.addEventListener('click', closeImageModal);
@@ -359,6 +375,14 @@ document.addEventListener('visibilitychange', () => {
 
 window.addEventListener('blur', () => handlePageFocus(false));
 window.addEventListener('focus', () => handlePageFocus(true));
+window.addEventListener('popstate', (e) => {
+    if (modal.classList.contains('active')) {
+        closeModal();
+    }
+    if (imageModal.classList.contains('active')) {
+        closeImageModal();
+    }
+});
 
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('project-image-click')) {
