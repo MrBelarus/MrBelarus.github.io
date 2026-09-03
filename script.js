@@ -20,8 +20,14 @@ const petProjectsList = [
     "pet-forever-fall"
 ];
 
+const assetProjectsList = [
+    "asset-2d-warriors",
+    "asset-3d-stylized-characters",
+];
+
 const projectsGrid = document.getElementById('projectsGrid');
 const petProjectsGrid = document.getElementById('petProjectsGrid');
+const assetProjectsGrid = document.getElementById('assetProjectsGrid');
 
 const modal = document.getElementById('projectModal');
 const closeBtn = document.querySelector('.modal-close');
@@ -64,6 +70,10 @@ async function initProjects() {
 
     if (petProjectsGrid) {
         await renderProjects(petProjectsList, petProjectsGrid);
+    }
+
+    if (assetProjectsGrid) {
+        await renderProjects(assetProjectsList, assetProjectsGrid);
     }
 
     initModalEvents();
