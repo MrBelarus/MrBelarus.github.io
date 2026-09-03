@@ -64,6 +64,8 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 };
 
 async function initProjects() {
+    updateExperienceYears();
+    
     if (projectsGrid) {
         await renderProjects(projectsList, projectsGrid);
     }
@@ -78,6 +80,23 @@ async function initProjects() {
 
     initModalEvents();
     initScrollAnimation();
+}
+
+function updateExperienceYears() {
+    const experienceElement = document.getElementById('experience-years');
+    if (!experienceElement) return;
+
+    const startDate = new Date(2021, 2, 1); // started my gamedev journey (Mar 2021)
+    const currentDate = new Date();
+
+    let years = currentDate.getFullYear() - startDate.getFullYear();
+    
+    const monthDiff = currentDate.getMonth() - startDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < startDate.getDate())) {
+        years--;
+    }
+
+    experienceElement.textContent = `${years}`;
 }
 
 async function renderProjects(list, gridContainer) {
@@ -121,7 +140,7 @@ function initScrollAnimation() {
     
     const observerOptions = {
         root: null,
-        rootMargin: '0px 0px -50px 0px',
+        rootMargin: '0px 0px -20px 0px',
         threshold: 0.15
     };
 
