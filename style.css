@@ -258,10 +258,17 @@ section[id] {
     flex: 0 0 300px;
     max-width: 300px;
     box-shadow: 0 4px 6px var(--shadow-light);
-    transition: transform 0.1s ease-out, box-shadow 0.5s ease;
+    opacity: 0;
+    transform: translateY(30px);
 }
 
-.project-card:hover {
+.project-card.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 0.1s ease-out, box-shadow 0.5s ease, opacity 0.5s ease;
+}
+
+.project-card.fade-in:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px var(--shadow-hover);
 }
